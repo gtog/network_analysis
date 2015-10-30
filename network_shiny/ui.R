@@ -6,14 +6,10 @@
 library(shiny)
 
 shinyUI(pageWithSidebar(
-  
-  # Add reference to external style sheet...
-  #tags$head(
-   # tags$link(rel = 'stylesheet', type = 'text/css', href = 'styles.css')
-  #),
+  theme = shinytheme("flatly"),
   
   # Application title
-  headerPanel("Overlap Analysis"),
+  titlePanel("Network Analysis App"),
   
   # and to specify whether outliers should be included
   sidebarPanel(
@@ -31,6 +27,7 @@ shinyUI(pageWithSidebar(
     #tags$hr(),
     
     selectInput("userVertexColor", "Color Meaning: ",choices=as.list(colorTypes),""),
+    
     helpText("Note: For example, deep red in Percent Uniqe indicates that the manger
              has few unique positions. Light Green implies many unique holdings. Percent Min Overlap
              will yield all the same color, provided each manager has at least one unique position.
