@@ -4,6 +4,7 @@
 
 # global variable to hold user supplied AUM...
 myaum <- NULL
+myedge <- NULL
 
 shinyServer(function(input,output,session) {
   
@@ -68,8 +69,19 @@ shinyServer(function(input,output,session) {
     if (is.null(inFile_AUM)) {
       return("Waiting for user to select a file.")
     } else {
-      myaum <<- read.csv(inFile_AUM, header = FALSE)
+      myaum <<- read.csv(inFile_AUM, header = FALSE, sep = ",")
       # return(myaum)
+    }
+  })
+  
+  getUserEdge <- eventReactive(input$userEdge$datapath, {
+    
+    inFile_Edge <- input$userEdge$datapath
+    
+    if (is.null(inFile_Edge)) {
+      return("Waiting for user to select a file.")
+    } else {
+      myedge <<- read.csv(inFile_Edge, sep = ",", header = FALSE)$V2
     }
   })
   
@@ -80,6 +92,10 @@ shinyServer(function(input,output,session) {
     # Check to see if the user wants to add an AUM file...
     if (input$addAUMYesNo) {
       aum <- getUserAUM()
+    }
+    
+    if (input$addEdgeYesNo) {
+      edge <- getUserEdge()
     }
     
     nh <-  input$numHoldings
@@ -119,7 +135,8 @@ shinyServer(function(input,output,session) {
         fundGraph = fund.g, #4
         stockNetwork = stock.net, #5
         fundNetwork = fund.net, #6
-        aumData = myaum #7
+        aumData = myaum, #7
+        edgeData = myedge #8
       ))
     }
   })
@@ -261,6 +278,8 @@ shinyServer(function(input,output,session) {
     
     graphCol <- addAlpha(graphCol, getAlpha())
     
+    
+    
     # Draw the network plot...
     la <- switch(input$userLayout,
                Auto = layout.auto(gr),
@@ -273,9 +292,17 @@ shinyServer(function(input,output,session) {
     e.wt <- get.edge.attribute(gr, "weight")
     ec <- ifelse(input$userEdgeType == "Straight", FALSE, TRUE)
     
+
+    # Get the edge variable mapped to a color palette...
+    if (!is.null(myedge) && input$userGraphType == "Fund View" && input$addEdgeYesNo == TRUE) {
+      vertexFrameCol <- cscale(myedge, seq_gradient_pal("blue", "red"))
+      vfc <- vertexFrameCol
+    } else {
+      vfc <- "white"
+    }
+    
     if (!is.null(myaum) && input$userGraphType == "Fund View" && input$addAUMYesNo == TRUE) {
-      vs <- abs(scale(as.numeric(myaum[,2]),center = 0)*15)
-      print(vs)
+      vs <- abs(scale(as.numeric(myaum[,2]), center = 0)*15)
     } else {
       vs <- getVertexSize()
     }
@@ -286,10 +313,10 @@ shinyServer(function(input,output,session) {
          vertex.label.cex = input$labelCex,
          vertex.color = graphCol,
          vertex.label.color = rgb(0,0,0,max = 255),
-         vertex.frame.color = "white",
+         vertex.frame.color = vfc,
          edge.curved = ec,
-         edge.color = "darkgrey",
-         edge.width = e.wt*1.50,
+         edge.color = "dark grey",
+         edge.width = e.wt*1.5,
          vertex.label = V(gr)$name,# See ?V for more...
          main = ifelse(input$userGraphType == "Fund View", "Fund Network Mapping", "Stock Network Mapping")
     )

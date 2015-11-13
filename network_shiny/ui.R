@@ -19,7 +19,11 @@ shinyUI(fluidPage(theme = shinytheme("flatly"),
       
       checkboxInput('addAUMYesNo', 'Add AUM File?', value = FALSE),
       
-      fileInput('userAUM', label = 'AUM File', accept = c('text/csv', 'text/comma-separated-values,text/plain','.csv')),
+      fileInput('userAUM', label = 'Vertex Variable File', accept = c('text/csv', 'text/comma-separated-values,text/plain','.csv')),
+      
+      checkboxInput('addEdgeYesNo', 'Add Edge File?', value = FALSE),
+      
+      fileInput('userEdge', label = 'Edge Variable File', accept = c('text/csv', 'text/comma-separated-values,text/plain','.csv')),
       
       uiOutput("numHoldings"),
       

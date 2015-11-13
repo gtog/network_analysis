@@ -3,13 +3,10 @@
 # Adam Duncan 2014
 
 library(igraph)
-library(plyr)
-library(reshape2)
-library(scales)
 library(shiny)
 library(shinyBS)
 library(shinythemes)
-# library(dMisc)
+library(scales)
 
 # Helper function defs...
 prettyScores <- function(x){
@@ -28,7 +25,6 @@ addAlpha <- function(col, alpha=1){
         function(x) 
           rgb(x[1], x[2], x[3], alpha = alpha))  
 }
-
 
 # Lists...
 
